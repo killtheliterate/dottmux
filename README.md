@@ -2,11 +2,11 @@
 
 clone:
 
-`$ git clone ...`
+`$ git clone https://github.com/killtheliterate/dottmux.git`
 
 link:
 
-`$ ln -s ~/.config/tmux/tmux.conf ~/.tmux.conf`
+`$ ln -s ~/dottmux/tmux.conf ~/.tmux.conf`
 
 deps:
 
