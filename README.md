@@ -10,5 +10,9 @@ link:
 
 deps:
 
-`$ brew install reattach-to-user-namespace`
-`$ sudo apt install xclip`
+- macos: `$ brew install reattach-to-user-namespace`
+- linux: `$ sudo apt install xsel`
+
+[tpm](https://github.com/tmux-plugins/tpm#key-bindings):
+
+`prefix` + `I`
