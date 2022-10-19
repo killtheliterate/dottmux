@@ -15,4 +15,6 @@ deps:
 
 [tpm](https://github.com/tmux-plugins/tpm#key-bindings):
 
-`prefix` + `I`
+`$ git clone https://github.com/tmux-plugins/tpm ~/.config/tmux/plugins/tpm`
+
+...then install: `prefix` + `I`
