@@ -1,0 +1,111 @@
+# act like GNU screen
+unbind C-b
+set -g prefix C-a
+
+# nested tmux: pass prefix through
+bind-key a send-prefix
+
+# ----------------------------------------------------------------------------
+# Terminal / Color
+# ----------------------------------------------------------------------------
+
+# Inner TERM — tmux-256color enables italics + undercurl support
+# NOTE: must be set before terminal-overrides
+set -g default-terminal "tmux-256color"
+
+# True color (Tc) — scoped to Kitty; avoids blowing up other terminals
+# $KITTY_WINDOW_ID is set by Kitty automatically and is the most reliable signal
+if-shell '[ -n "$KITTY_WINDOW_ID" ]' {
+  set -ga terminal-overrides ",xterm-kitty:Tc"
+}
+
+# Cursor shape passthrough (nvim, etc.) — :help tui-cursor-shape
+set -ga terminal-overrides '*:Ss=\E[%p1%d q:Se=\E[ q'
+
+# Extended keys / Kitty keyboard protocol
+set -g extended-keys on
+set -as terminal-features 'xterm*:extkeys'
+
+# OSC 52 clipboard passthrough — lets nvim yank to system clipboard through tmux
+set -g set-clipboard on
+
+set -g extended-keys-format csi-u
+
+# ----------------------------------------------------------------------------
+# General
+# ----------------------------------------------------------------------------
+
+# Fix vim mode-switching delay
+set -s escape-time 0
+
+# Larger scrollback buffer
+set -g history-limit 50000
+
+# Message display duration (ms)
+set -g display-time 4000
+
+# Status bar refresh rate (s)
+set -g status-interval 5
+
+# Required by nvim's autoread and some other plugins
+set -g focus-events on
+
+# Emacs keys in command prompt — better for one-liners even for vim users
+set -g status-keys emacs
+
+# aggressive-resize is deprecated as of tmux 3.3 — window-size latest is the
+# modern equivalent: resize to the most recently active client rather than all
+# attached clients. Swap back to aggressive-resize if on tmux < 3.3.
+set -g window-size latest
+
+# Mouse
+set-option -g mouse on
+
+# ----------------------------------------------------------------------------
+# Vim-style keybindings
+# ----------------------------------------------------------------------------
+
+set-window-option -g mode-keys vi
+
+bind h select-pane -L
+bind j select-pane -D
+bind k select-pane -U
+bind l select-pane -R
+
+bind-key -r J resize-pane -D 5
+bind-key -r K resize-pane -U 5
+bind-key -r H resize-pane -L 5
+bind-key -r L resize-pane -R 5
+
+# ----------------------------------------------------------------------------
+# Copy / Paste
+# ----------------------------------------------------------------------------
+
+bind-key -T copy-mode-vi 'v' send -X begin-selection
+bind-key -T copy-mode-vi 'y' send -X copy-selection-and-cancel
+
+bind-key -T copy-mode-vi Up   send -X history-up
+bind-key -T copy-mode-vi Down send -X history-down
+
+# ----------------------------------------------------------------------------
+# Aliases
+# ----------------------------------------------------------------------------
+
+set -g command-alias[0] bigsplit="run-shell '$HOME/.config/tmux/big-split.sh'"
+
+# ----------------------------------------------------------------------------
+# Plugins (tpm)
+# ----------------------------------------------------------------------------
+
+set-environment -g TMUX_PLUGIN_MANAGER_PATH '~/.config/tmux/plugins/'
+
+set -g @plugin 'tmux-plugins/tpm'
+set -g @plugin 'tmux-plugins/tmux-sensible'
+set -g @plugin 'tmux-plugins/tmux-yank'
+set -g @plugin 'catppuccin/tmux'
+
+# NOTE: newer catppuccin/tmux uses @catppuccin_flavor (no 'u') — if colors
+# aren't applying, check which version of the plugin you have
+set -g @catppuccin_flavor "frappe"
+
+run '~/.config/tmux/plugins/tpm/tpm'
